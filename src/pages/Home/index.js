@@ -1,91 +1,49 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { MdAddShoppingCart } from 'react-icons/md';
+import { formatPrice } from '../../util/format';
+
+import api from '../../services/api';
 
 import { ProductList } from './styles';
 
-export default function Home() {
-  return (
-    <ProductList>
-      <li>
-        <img
-          src="http://static.netshoes.com.br/produtos/tenis-nike-shox-nz-eu-masculino/14/D12-9970-014/D12-9970-014_zoom1.jpg"
-          alt="tenis"
-        />
-        <strong>Tênis muito legal</strong>
-        <span>R$129,00</span>
+export default class Home extends Component {
+  // eslint-disable-next-line react/state-in-constructor
+  state = {
+    products: [],
+  };
 
-        <button type="button">
-          <div>
-            <MdAddShoppingCart size={20} color="#fff" />
-          </div>
+  async componentDidMount() {
+    const response = await api.get(`/products`);
 
-          <span>ADICIONAR AO CARRINHO</span>
-        </button>
-      </li>
-      <li>
-        <img
-          src="http://static.netshoes.com.br/produtos/tenis-nike-shox-nz-eu-masculino/14/D12-9970-014/D12-9970-014_zoom1.jpg"
-          alt="tenis"
-        />
-        <strong>Tênis muito legal</strong>
-        <span>R$129,00</span>
+    const data = response.data.map(product => ({
+      ...product,
+      priceFormatted: formatPrice(...product),
+    }));
 
-        <button type="button">
-          <div>
-            <MdAddShoppingCart size={20} color="#fff" />
-          </div>
+    if (response.data) {
+      this.setState({ products: data });
+    }
+  }
 
-          <span>ADICIONAR AO CARRINHO</span>
-        </button>
-      </li>
-      <li>
-        <img
-          src="http://static.netshoes.com.br/produtos/tenis-nike-shox-nz-eu-masculino/14/D12-9970-014/D12-9970-014_zoom1.jpg"
-          alt="tenis"
-        />
-        <strong>Tênis muito legal</strong>
-        <span>R$129,00</span>
+  render() {
+    const { products } = this.state;
+    return (
+      <ProductList>
+        {products.map(product => (
+          <li key={String(product.id)}>
+            <img src={product.image} alt={product.title} />
+            <strong>{product.title}</strong>
+            <span>R$ {product.priceFormatted}</span>
 
-        <button type="button">
-          <div>
-            <MdAddShoppingCart size={20} color="#fff" />
-          </div>
-
-          <span>ADICIONAR AO CARRINHO</span>
-        </button>
-      </li>
-      <li>
-        <img
-          src="http://static.netshoes.com.br/produtos/tenis-nike-shox-nz-eu-masculino/14/D12-9970-014/D12-9970-014_zoom1.jpg"
-          alt="tenis"
-        />
-        <strong>Tênis muito legal</strong>
-        <span>R$129,00</span>
-
-        <button type="button">
-          <div>
-            <MdAddShoppingCart size={20} color="#fff" />
-          </div>
-
-          <span>ADICIONAR AO CARRINHO</span>
-        </button>
-      </li>
-      <li>
-        <img
-          src="http://static.netshoes.com.br/produtos/tenis-nike-shox-nz-eu-masculino/14/D12-9970-014/D12-9970-014_zoom1.jpg"
-          alt="tenis"
-        />
-        <strong>Tênis muito legal</strong>
-        <span>R$129,00</span>
-
-        <button type="button">
-          <div>
-            <MdAddShoppingCart size={20} color="#fff" />
-          </div>
-
-          <span>ADICIONAR AO CARRINHO</span>
-        </button>
-      </li>
-    </ProductList>
-  );
+            <button type="button">
+              <div>
+                <MdAddShoppingCart size={20} color="#fff" />
+              </div>
+              <span>ADICIONAR AO CARRINHO</span>
+            </button>
+          </li>
+        ))}
+      </ProductList>
+    );
+  }
 }
