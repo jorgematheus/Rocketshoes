@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { darken } from 'polished';
+import { AiOutlineLoading } from 'react-icons/ai';
 
 export const ProductList = styled.ul`
   display: grid;
@@ -56,6 +57,41 @@ export const ProductList = styled.ul`
           margin-right: 5px;
         }
       }
+    }
+  }
+`;
+
+export const Loading = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  margin-top: 150px;
+
+  span {
+    margin-top: 15px;
+    font-size: 20px;
+    color: #fff;
+  }
+`;
+
+export const Spinner = styled(AiOutlineLoading).attrs(state => ({
+  color: '#fff',
+  fontSize: state.fontSize,
+}))`
+  background: transparent;
+  animation-name: spin;
+  animation-duration: 1000ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
     }
   }
 `;

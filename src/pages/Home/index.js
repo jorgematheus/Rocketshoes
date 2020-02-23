@@ -8,15 +8,19 @@ import * as ActionsCart from '../../store/modules/cart/actions';
 
 import api from '../../services/api';
 
-import { ProductList } from './styles';
+import { ProductList, Loading, Spinner } from './styles';
 
 class Home extends Component {
   // eslint-disable-next-line react/state-in-constructor
   state = {
     products: [],
+    loading: false,
+    loadingAddToCart: false,
+    indexProduct: null,
   };
 
   async componentDidMount() {
+    this.setState({ loading: true });
     const response = await api.get(`/products`);
 
     const data = response.data.map(product => ({
@@ -25,40 +29,56 @@ class Home extends Component {
     }));
 
     if (response.data) {
-      this.setState({ products: data });
+      this.setState({ products: data, loading: false });
     }
   }
 
-  handleAddProduct = product => {
-    const { addToCart } = this.props;
-
-    addToCart(product);
+  handleAddProduct = (id, index) => {
+    this.setState({ loadingAddToCart: true, indexProduct: index });
+    const { addToCartRequest } = this.props;
+    addToCartRequest(id);
   };
 
   render() {
-    const { products } = this.state;
+    const { products, loading, loadingAddToCart, indexProduct } = this.state;
     const { amount } = this.props;
-    console.log(amount);
     return (
-      <ProductList>
-        {products.map(product => (
-          <li key={String(product.id)}>
-            <img src={product.image} alt={product.title} />
-            <strong>{product.title}</strong>
-            <span>R$ {product.priceFormatted}</span>
-            <button
-              type="button"
-              onClick={() => this.handleAddProduct(product)}
-            >
-              <div>
-                <MdAddShoppingCart size={20} color="#fff" />
-                {amount[product.id] || 0}
-              </div>
-              <span>ADICIONAR AO CARRINHO</span>
-            </button>
-          </li>
-        ))}
-      </ProductList>
+      <>
+        <ProductList>
+          {products.map((product, index) => (
+            <li key={String(product.id)}>
+              <img src={product.image} alt={product.title} />
+              <strong>{product.title}</strong>
+              <span>{product.priceFormatted}</span>
+              <button
+                type="button"
+                onClick={() => this.handleAddProduct(product.id, index)}
+              >
+                <div>
+                  {loadingAddToCart &&
+                  products.findIndex(p => p.id === product.id) ===
+                    indexProduct ? (
+                    <Spinner fontSize={20} />
+                  ) : (
+                    <MdAddShoppingCart size={20} color="#fff" />
+                  )}
+                  {amount[product.id] || 0}
+                </div>
+                <span>ADICIONAR AO CARRINHO</span>
+              </button>
+            </li>
+          ))}
+        </ProductList>
+        {loading ? (
+          <Loading>
+            <Spinner fontSize={40} />
+
+            <span>Carregando...</span>
+          </Loading>
+        ) : (
+          ''
+        )}
+      </>
     );
   }
 }
