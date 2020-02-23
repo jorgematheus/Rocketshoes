@@ -8,7 +8,9 @@ import * as ActionsCart from '../../store/modules/cart/actions';
 
 import api from '../../services/api';
 
-import { ProductList, Loading, Spinner } from './styles';
+import { ProductList, Loading } from './styles';
+
+import Spinner from '../../components/Spinner/index';
 
 class Home extends Component {
   // eslint-disable-next-line react/state-in-constructor
