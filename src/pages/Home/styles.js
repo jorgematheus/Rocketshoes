@@ -77,9 +77,10 @@ export const Loading = styled.div`
 `;
 
 export const Spinner = styled(AiOutlineLoading).attrs(state => ({
-  color: '#fff',
+  color: state.color ? state.color : '#fff',
   fontSize: state.fontSize,
 }))`
+  font-weight: bold;
   background: transparent;
   animation-name: spin;
   animation-duration: 1000ms;
